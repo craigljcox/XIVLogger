@@ -336,7 +336,7 @@ namespace XIVLogger
 
         public void addMessage(XivChatType type, string sender, string message)
         {
-            Log.Add(new ChatMessage(type, sender, message));
+            Log.Add(new ChatMessage(type, sender, message, DateTime.Now));
         }
 
         private string getTimeStamp()
@@ -481,7 +481,7 @@ namespace XIVLogger
 
                     if (aTimestamp)
                     {
-                        text += $"[{message.Timestamp:t}] ";
+                        text += message.getChatMessageTimeStamp() + "|";
                     }
 
                     switch (message.Type)
@@ -496,64 +496,64 @@ namespace XIVLogger
                             text += sender + " >> " + message.Message;
                             break;
                         case XivChatType.TellOutgoing:
-                            text += ">> " + sender + ": " + message.Message;
+                            text += "[TO]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.FreeCompany:
-                            text += "[FC]" + sender + ": " + message.Message;
+                            text += "[FC]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.NoviceNetwork:
-                            text += "[NN]" + sender + ": " + message.Message;
+                            text += "[NN]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell1:
-                            text += "[CWLS1]" + sender + ": " + message.Message;
+                            text += "[CWLS1]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell2:
-                            text += "[CWLS2]" + sender + ": " + message.Message;
+                            text += "[CWLS2]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell3:
-                            text += "[CWLS3]" + sender + ": " + message.Message;
+                            text += "[CWLS3]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell4:
-                            text += "[CWLS4]" + sender + ": " + message.Message;
+                            text += "[CWLS4]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell5:
-                            text += "[CWLS5]" + sender + ": " + message.Message;
+                            text += "[CWLS5]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell6:
-                            text += "[CWLS6]" + sender + ": " + message.Message;
+                            text += "[CWLS6]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell7:
-                            text += "[CWLS7]" + sender + ": " + message.Message;
+                            text += "[CWLS7]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.CrossLinkShell8:
-                            text += "[CWLS8]" + sender + ": " + message.Message;
+                            text += "[CWLS8]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls1:
-                            text += "[LS1]" + sender + ": " + message.Message;
+                            text += "[LS1]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls2:
-                            text += "[LS2]" + sender + ": " + message.Message;
+                            text += "[LS2]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls3:
-                            text += "[LS3]" + sender + ": " + message.Message;
+                            text += "[LS3]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls4:
-                            text += "[LS4]" + sender + ": " + message.Message;
+                            text += "[LS4]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls5:
-                            text += "[LS5]" + sender + ": " + message.Message;
+                            text += "[LS5]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls6:
-                            text += "[LS6]" + sender + ": " + message.Message;
+                            text += "[LS6]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls7:
-                            text += "[LS7]" + sender + ": " + message.Message;
+                            text += "[LS7]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Ls8:
-                            text += "[LS8]" + sender + ": " + message.Message;
+                            text += "[LS8]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.PvPTeam:
-                            text += "[PvP]" + sender + ": " + message.Message;
+                            text += "[PvP]" + "|" + sender + "|" + message.Message;
                             break;
                         case XivChatType.Say:
                         case XivChatType.Shout:
@@ -561,12 +561,16 @@ namespace XIVLogger
                         case XivChatType.Party:
                         case XivChatType.CrossParty:
                         case XivChatType.Alliance:
-                            text += sender + ": " + message.Message;
+                        case XivChatType.SystemMessage:
+                            text += message.Type.ToString() + "|" + sender + "|" + message.Message;
                             break;
                         default:
-                            text += message.Message;
+                            text += message.Type.ToString() ?? "[Unknown]" + "|" + sender + "|" + message.Message;
                             break;
                     }
+
+                    // Make each row unique.
+                    text += "|" + Guid.NewGuid();
 
                     result.Add(text);
                 }
@@ -647,12 +651,17 @@ namespace XIVLogger
         public string Sender { get => sender; set => sender = value; }
         public DateTime Timestamp { get => timestamp; set => timestamp = value; }
 
-        public ChatMessage(XivChatType type, string sender, string message)
+        public ChatMessage(XivChatType type, string sender, string message, DateTime? timestamp)
         {
             this.Sender = sender;
             this.Type = type;
             this.Message = message;
-            this.Timestamp = DateTime.Now;
+            this.Timestamp = timestamp ?? DateTime.Now;
+        }
+
+        public string getChatMessageTimeStamp()
+        {
+            return timestamp.ToString("dd-MM-yyyy_hh.mm.ss") ?? DateTime.MinValue.ToString();
         }
     }
 
