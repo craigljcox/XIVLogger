@@ -6,7 +6,7 @@
   "Punchline": "Save chat logs to your computer as text files or copy them!",
   "Description": "Save chat logs as text files from when this is loaded. /xivlogger for settings, /savelog to save logs, /copylogs to copy logs.",
   "ApplicableVersion": "any",
-  "IconUrl": "https://raw.githubusercontent.com/cadaeix/XIVLogger/ParseableLoggingInitial/Assets/icon.png",
+  "IconUrl": "https://raw.githubusercontent.com/craigljcox/XIVLogger/ParseableLoggingInitial/Assets/icon.png",
   "RepoUrl": "https://github.com/craigljcox/XIVLogger",
   "Tags": [
     "xivlauncher",
